@@ -29,14 +29,28 @@ const transactions = [
         description: 'Internet',
         amount: -20000,
         date: '23/01/2021'
+    },
+    {
+        id: 4,
+        description: 'Teste',
+        amount: -12255,
+        date: '23/01/2021'
     }
 ]
 
 const Transaction = {
+    all: transactions,
+
+    add(transaction){
+        Transaction.all.push(transaction)
+
+        App.reload()
+    },
+
     incomes(){
         //somar as entradas
         let income = 0;
-        transactions.forEach((transaction) => {
+        Transaction.all.forEach((transaction) => {
             if(transaction.amount > 0){
                 income = income + transaction.amount
             }
@@ -44,10 +58,11 @@ const Transaction = {
 
         return income;
     },
+
     expenses(){
         //somar as saidas
         let expense = 0;
-        transactions.forEach((transaction) => {
+        Transaction.all.forEach((transaction) => {
             if(transaction.amount < 0){
                 expense = expense + transaction.amount
             }
@@ -55,6 +70,7 @@ const Transaction = {
 
         return expense;
     },
+
     total(){
 
         return Transaction.incomes() + Transaction.expenses();
@@ -96,6 +112,10 @@ const DOM = {
         document.getElementById('expenseDisplay').innerHTML = Utils.formatCurrency(Transaction.expenses())
 
         document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency(Transaction.total())
+    },
+
+    clearTransactions(){
+        Dom.transactionsContainer.innerHTML = ""
     }
 }
 
@@ -116,9 +136,29 @@ const Utils = {
     }
 }
 
+const App = {
+    init(){
+        Transaction.all.forEach((transaction) =>{
+            DOM.addTransaction(transaction)
+        })
 
-transactions.forEach(function(transaction){
-    DOM.addTransaction(transaction)
+        DOM.updateBalance()
+    },
+
+    reload(){
+        Dom.clearTransactions()
+        App.init()
+
+    }
+}
+
+App.init()
+
+Transaction.add({
+    id: 5,
+    description: 'Teste 2',
+    amount: 200,
+    date: '11/01/2021'
 })
 
-DOM.updateBalance()
+
